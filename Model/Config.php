@@ -12,12 +12,14 @@ class Config
     public function __construct(
     \Magento\Framework\App\Config\ScopeConfigInterface $configInterface,
     \Magento\Customer\Model\Session $customerSession,
-    \Magento\Backend\Model\Session\Quote $sessionQuote
+    \Magento\Backend\Model\Session\Quote $sessionQuote,
+    \Magento\Framework\Serialize\Serializer\Json $serialize
     )
     {
         $this->_scopeConfigInterface = $configInterface;
         $this->customerSession = $customerSession;
         $this->sessionQuote = $sessionQuote;
+        $this->serialize = $serialize;
     }
 
     public function isLiveMode() {
@@ -77,7 +79,8 @@ class Config
     public function getSitecodes() {
         $sitecodeConfig = $this->_scopeConfigInterface->getValue('payment/worldpay_payments_card/sitecodes');
         if ($sitecodeConfig) {
-            $siteCodes = unserialize($sitecodeConfig);
+            $siteCodes = $this->serialize->unserialize($sitecodeConfig);
+            // $siteCodes = unserialize($sitecodeConfig);
             if (is_array($siteCodes)) {
                 return $siteCodes;
             }
